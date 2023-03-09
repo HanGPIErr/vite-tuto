@@ -34,6 +34,11 @@ export class MyElement extends LitElement {
       totalPokemonCount: { type: Number },
       correctCount: { type: Number },
       incorrectCount: { type: Number },
+      /**
+       * Array of images for the pokemons won
+       */
+      wonPokemon: { type: Array },
+      lostPokemon: { type: Array },
     };
   }
 
@@ -47,13 +52,17 @@ export class MyElement extends LitElement {
     this.totalPokemonCount = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
+    this.wonPokemon = [];
+    this.lostPokemon = [];
+
+    
   }
 
   render() {
     return html`
       <slot></slot>
       <div class="card">
-      <p class="read-the-docs">${this.docsHint}</p>
+        <p class="read-the-docs">${this.docsHint}</p>
         <div class="mb-3">
           <img
             src=${this.imageUrl ? this.imageUrl : ""}
@@ -70,7 +79,7 @@ export class MyElement extends LitElement {
           ? html`
               <div>
                 <p>Comment s'apelle ce pokemon ?</p>
-                <p>${this.pokemonName}</p>
+                <p>Réponse : ${this.pokemonName}</p>
               </div>
             `
           : html`
@@ -83,9 +92,9 @@ export class MyElement extends LitElement {
           <input type="text" id="pokemonNameInput" />
           <button type="submit" @click=${this._onValidateClick}>Valider</button>
         </div>
-
+  
         <div>
-          <label for="totalPokemonCountInput">Total D'essai: </label>
+          <label for="totalPokemonCountInput">Total de Clic: </label>
           <input
             type="number"
             id="totalPokemonCountInput"
@@ -111,18 +120,45 @@ export class MyElement extends LitElement {
             disabled
           />
         </div>
-
+        <div>
+          <div>
+            <label>Pokemon gagnés:</label>
+            <div class="cards-container" id="wonCardsContainer">
+              ${this.wonPokemon.map(
+                (pokemon) => html`
+                  <div class="cardWon">
+                    <img class="pokemon-image" src=${pokemon.imageUrl} alt=${pokemon.name}>
+                    <p>${pokemon.name}</p>
+                  </div>
+                `
+              )}
+            </div>
+          </div>
+  
+          <div>
+            <label>Pokemon perdus:</label>
+            <div class="cards-container" id="lostCardsContainer">
+              ${this.lostPokemon.map(
+                (pokemon) => html`
+                  <div class="cardLost">
+                    <img class="pokemon-image" src=${pokemon.imageUrl} alt=${pokemon.name}>
+                    <p>${pokemon.name}</p>
+                  </div>
+                `
+              )}
+            </div>
+          </div>
+        </div>
         <div>
           <button @click=${this._onCountResetClick}>Reset Compteur</button>
         </div>
         <div>
           <button @click=${this._onAllResetClick}>Reset Tout</button>
         </div>
-        
       </div>
-      
     `;
   }
+  
 
   async _onClick() {
     this.count++;
@@ -158,8 +194,29 @@ export class MyElement extends LitElement {
     this.totalPokemonCount = 0;
     this.correctCount = 0;
     this.incorrectCount = 0;
-    document.querySelector("#pokemonNameInput").value = "";
+    const input = document.querySelector("#pokemonNameInput");
+    if (input) {
+      input.value = "";
+    }
+    this.wonPokemon = [];
+    this.lostPokemon = [];
+
+    this.requestUpdate();
+
+    const wonCardsContainer = this.shadowRoot.querySelector(
+      "#wonCardsContainer"
+    );
+    if (wonCardsContainer) {
+      wonCardsContainer.innerHTML = "";
+    }
+    const lostCardsContainer = this.shadowRoot.querySelector(
+      "#lostCardsContainer"
+    );
+    if (lostCardsContainer) {
+      lostCardsContainer.innerHTML = "";
+    }
   }
+
   _onValidateClick() {
     const input = this.shadowRoot.querySelector("#pokemonNameInput");
     const inputValue = input.value.trim().toLowerCase();
@@ -171,19 +228,58 @@ export class MyElement extends LitElement {
       this.count = 0;
       this.correctCount++;
       input.value = "";
+      this._addToWonCards();
     } else {
       alert("Dommage, vous avez perdu !");
       this.hasLost = true;
       this.incorrectCount++;
+      this._addToLostCards();
     }
     this.totalPokemonCount++;
+  
+    // Générer un nouveau Pokemon automatiquement après avoir perdu ou gagné
+    this._onClick();
+  
     this.requestUpdate();
   }
+  
+
+  _addToWonCards() {
+    const card = {
+      name: this.pokemonName,
+      imageUrl: this.imageUrl,
+    };
+    this.wonPokemon = [...this.wonPokemon, card];
+    localStorage.setItem(
+      "wonPokemon",
+      JSON.stringify(this.wonPokemon)
+    );
+  }
+  
+  
+ _addToLostCards() {
+  const lostCardsContainer = this.shadowRoot.querySelector("#lostCardsContainer");
+  const card = document.createElement("div");
+  card.classList.add("cardLost");
+  card.innerHTML = `
+    <img class="pokemon-image" src="${this.imageUrl}" alt="${this.pokemonName}">
+    <p>${this.pokemonName}</p>
+  `;
+  lostCardsContainer.appendChild(card);
+
+  // Stocker le Pokemon perdu dans localStorage
+  const lostPokemon = { name: this.pokemonName, imageUrl: this.imageUrl };
+  const savedLostPokemon = localStorage.getItem("lostPokemon");
+  const parsedLostPokemon = savedLostPokemon ? JSON.parse(savedLostPokemon) : [];
+  parsedLostPokemon.push(lostPokemon);
+  localStorage.setItem("lostPokemon", JSON.stringify(parsedLostPokemon));
+}
+
 
   static get styles() {
     return css`
       :host {
-        max-width: 1280px;
+        width: 1280px;
         margin: 0 auto;
         padding: 2rem;
         text-align: center;
@@ -206,31 +302,78 @@ export class MyElement extends LitElement {
       .logo.lit:hover {
         filter: drop-shadow(0 0 2em #325cffaa);
       }
+      .cardOwn,
+      .cardLost {
+  font-family: sans-serif;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+}
 
+.cardOwn img,
+.cardLost img {
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cards-container .cardLost,
+.cards-container .cardOwn {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
       .card {
+        max-width : 100%;
         margin: 16px;
         padding: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: url('./src/assets/bg-pokemon.jpg');
+        background-image: url("./src/assets/bg-pokemon.jpg");
         background-size: cover;
         background-position: center;
         border-radius: 8px;
         box-shadow: 0 0 2em #000000aa;
-       
-        
       }
 
       .card > * {
         margin: 8px;
-        
       }
 
       input[type="number"] {
         width: 50px;
       }
+      .cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
 
+.cards-container .card {
+  max-width: 150px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.cards-container .card img {
+  width: 100%;
+  height: auto;
+}
+
+.cards-container .card p {
+  margin: 0;
+  padding: 10px;
+  text-align: center;
+}
       .read-the-docs {
         color: #888;
       }
