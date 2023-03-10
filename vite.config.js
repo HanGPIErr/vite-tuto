@@ -1,14 +1,21 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    target: 'es2018',
     lib: {
-      entry: 'src/my-element.js',
-      formats: ['es'],
+      entry: resolve(__dirname, 'src', 'my-element.ts'),
+      name: 'my-element',
+      fileName: (format) => `my-element.${format}.js`,
     },
     rollupOptions: {
-      external: /^lit/,
+      external: ['lit-element'],
+      output: {
+        globals: {
+          'lit-element': 'LitElement',
+        },
+      },
     },
   },
 })
