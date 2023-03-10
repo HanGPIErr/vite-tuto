@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'path'
 
+// https://vitejs.dev/config/
 export default defineConfig({
   build: {
     target: 'es2018',
@@ -10,12 +10,7 @@ export default defineConfig({
       fileName: (format) => `my-element.${format}.js`,
     },
     rollupOptions: {
-      external: ['lit-element'],
-      output: {
-        globals: {
-          'lit-element': 'LitElement',
-        },
-      },
+      external: /^lit/,
     },
   },
 })
