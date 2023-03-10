@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
+import copy from 'rollup-plugin-copy';
 
 export default defineConfig({
   build: {
@@ -8,6 +9,14 @@ export default defineConfig({
     },
     rollupOptions: {
       external: /^lit/,
+      plugins: [
+        copy({
+          targets: [
+            { src: 'index.html', dest: 'dist' },
+          ],
+          flatten: true,
+        }),
+      ],
     },
   },
   scripts: {
