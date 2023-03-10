@@ -10,7 +10,7 @@ export default defineConfig({
         copy({
           targets: [
             { src: 'index.html', dest: 'dist' },
-            { src: 'src/assets/bg-pokemon.jpg', dest: 'dist/assets' },
+            { src: 'src/assets/**/*', dest: 'dist/assets' },
           ],
           flatten: true,
         }),
