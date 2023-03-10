@@ -3,12 +3,9 @@ import copy from 'rollup-plugin-copy';
 
 export default defineConfig({
   build: {
-    lib: {
-      entry: 'src/my-element.js',
-      formats: ['es'],
-    },
+    // ...
     rollupOptions: {
-      external: /^lit/,
+      // ...
       plugins: [
         copy({
           targets: [
@@ -22,4 +19,4 @@ export default defineConfig({
   scripts: {
     preview: 'vite preview --port 8080'
   }
-})
+});
