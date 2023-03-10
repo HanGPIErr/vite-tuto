@@ -170,7 +170,7 @@ const lt=function(){const t=document.createElement("link").relList;if(t&&t.suppo
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: url("./assets/bg-pokemon.jpg");
+        background-image: url("./src/assets/bg-pokemon.jpg");
         background-size: cover;
         background-position: center;
         border-radius: 8px;
