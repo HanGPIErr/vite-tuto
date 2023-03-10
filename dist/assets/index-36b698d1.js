@@ -1,48 +1,10 @@
-import { LitElement as r, html as i, css as s } from "lit";
-class c extends r {
-  static get properties() {
-    return {
-      /**
-       * Copy for the read the docs hint.
-       */
-      docsHint: { type: String },
-      /**
-       * The number of times the button has been clicked.
-       */
-      count: { type: Number },
-      /**
-       * The URL of the current Pokemon's image.
-       */
-      imageUrl: { type: String },
-      /**
-       * The name of the current Pokemon.
-       */
-      pokemonName: { type: String },
-      /**
-       * Whether the user has lost at least once.
-       */
-      hasLost: { type: Boolean },
-      totalPokemonCount: { type: Number },
-      correctCount: { type: Number },
-      incorrectCount: { type: Number },
-      /**
-       * Array of images for the pokemons won
-       */
-      wonPokemon: { type: Array },
-      lostPokemon: { type: Array }
-    };
-  }
-  constructor() {
-    super(), this.docsHint = "Générer un pokemon aléatoire", this.count = 0, this.imageUrl = "", this.pokemonName = "", this.hasLost = !1, this.totalPokemonCount = 0, this.correctCount = 0, this.incorrectCount = 0, this.wonPokemon = [], this.lostPokemon = [];
-  }
-  render() {
-    return i`
+var m=(c,t,i)=>new Promise((n,o)=>{var e=r=>{try{l(i.next(r))}catch(d){o(d)}},s=r=>{try{l(i.throw(r))}catch(d){o(d)}},l=r=>r.done?n(r.value):Promise.resolve(r.value).then(e,s);l((i=i.apply(c,t)).next())});import{LitElement as p,html as a,css as u}from"lit";(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))n(o);new MutationObserver(o=>{for(const e of o)if(e.type==="childList")for(const s of e.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&n(s)}).observe(document,{childList:!0,subtree:!0});function i(o){const e={};return o.integrity&&(e.integrity=o.integrity),o.referrerPolicy&&(e.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?e.credentials="include":o.crossOrigin==="anonymous"?e.credentials="omit":e.credentials="same-origin",e}function n(o){if(o.ep)return;o.ep=!0;const e=i(o);fetch(o.href,e)}})();class h extends p{static get properties(){return{docsHint:{type:String},count:{type:Number},imageUrl:{type:String},pokemonName:{type:String},hasLost:{type:Boolean},totalPokemonCount:{type:Number},correctCount:{type:Number},incorrectCount:{type:Number},wonPokemon:{type:Array},lostPokemon:{type:Array}}}constructor(){super(),this.docsHint="Générer un pokemon aléatoire",this.count=0,this.imageUrl="",this.pokemonName="",this.hasLost=!1,this.totalPokemonCount=0,this.correctCount=0,this.incorrectCount=0,this.wonPokemon=[],this.lostPokemon=[]}render(){return a`
       <slot></slot>
       <div class="card">
         <p class="read-the-docs">${this.docsHint}</p>
         <div class="mb-3">
           <img
-            src=${this.imageUrl ? this.imageUrl : ""}
+            src=${this.imageUrl?this.imageUrl:""}
             alt=${this.pokemonName}
             width="100"
             height="100"
@@ -52,12 +14,12 @@ class c extends r {
           <button @click=${this._onClick} part="button">NEW POKEMON</button>
           <button @click=${this._onResetClick}>Reset</button>
         </div>
-        ${this.hasLost ? i`
+        ${this.hasLost?a`
               <div>
                 <p>Comment s'apelle ce pokemon ?</p>
                 <p>Réponse : ${this.pokemonName}</p>
               </div>
-            ` : i`
+            `:a`
               <div>
                 <p>Essayez de deviner le nom de ce Pokemon !</p>
                 <p>(En Anglais !)</p>
@@ -99,28 +61,24 @@ class c extends r {
           <div>
             <label>Pokemon gagnés:</label>
             <div class="cards-container" id="wonCardsContainer">
-              ${this.wonPokemon.map(
-      (t) => i`
+              ${this.wonPokemon.map(t=>a`
                   <div class="cardWon">
                     <img class="pokemon-image" src=${t.imageUrl} alt=${t.name}>
                     <p>${t.name}</p>
                   </div>
-                `
-    )}
+                `)}
             </div>
           </div>
   
           <div>
             <label>Pokemon perdus:</label>
             <div class="cards-container" id="lostCardsContainer">
-              ${this.lostPokemon.map(
-      (t) => i`
+              ${this.lostPokemon.map(t=>a`
                   <div class="cardLost">
                     <img class="pokemon-image" src=${t.imageUrl} alt=${t.name}>
                     <p>${t.name}</p>
                   </div>
-                `
-    )}
+                `)}
             </div>
           </div>
         </div>
@@ -131,61 +89,10 @@ class c extends r {
           <button @click=${this._onAllResetClick}>Reset Tout</button>
         </div>
       </div>
-    `;
-  }
-  async _onClick() {
-    this.count++, this.totalPokemonCount++;
-    const t = Math.floor(Math.random() * 898) + 1;
-    console.log("Pokemon number: ", t);
-    const e = await (await fetch(
-      "https://pokeapi.co/api/v2/pokemon/" + t
-    )).json();
-    this.imageUrl = e.sprites.other["official-artwork"].front_shiny, this.pokemonName = e.name;
-  }
-  _onResetClick() {
-    this.count = 0, this.imageUrl = "", this.pokemonName = "", this.hasLost = !1, document.querySelector("#pokemonNameInput").value = "";
-  }
-  _onCountResetClick() {
-    this.totalPokemonCount = 0, this.correctCount = 0, this.incorrectCount = 0;
-  }
-  _onAllResetClick() {
-    this.count = 0, this.imageUrl = "", this.pokemonName = "", this.hasLost = !1, this.totalPokemonCount = 0, this.correctCount = 0, this.incorrectCount = 0;
-    const t = document.querySelector("#pokemonNameInput");
-    t && (t.value = ""), this.wonPokemon = [], this.lostPokemon = [], this.requestUpdate();
-    const o = this.shadowRoot.querySelector(
-      "#wonCardsContainer"
-    );
-    o && (o.innerHTML = "");
-    const e = this.shadowRoot.querySelector(
-      "#lostCardsContainer"
-    );
-    e && (e.innerHTML = "");
-  }
-  _onValidateClick() {
-    const t = this.shadowRoot.querySelector("#pokemonNameInput");
-    t.value.trim().toLowerCase() === this.pokemonName.toLowerCase() ? (alert("Félicitations, vous avez gagné !"), this.hasLost = !1, this.pokemonName = "", this.imageUrl = "", this.count = 0, this.correctCount++, t.value = "", this._addToWonCards()) : (alert("Dommage, vous avez perdu !"), this.hasLost = !0, this.incorrectCount++, this._addToLostCards()), this.totalPokemonCount++, this._onClick(), this.requestUpdate();
-  }
-  _addToWonCards() {
-    const t = {
-      name: this.pokemonName,
-      imageUrl: this.imageUrl
-    };
-    this.wonPokemon = [...this.wonPokemon, t], localStorage.setItem(
-      "wonPokemon",
-      JSON.stringify(this.wonPokemon)
-    );
-  }
-  _addToLostCards() {
-    const t = this.shadowRoot.querySelector("#lostCardsContainer"), o = document.createElement("div");
-    o.classList.add("cardLost"), o.innerHTML = `
+    `}_onClick(){return m(this,null,function*(){this.count++,this.totalPokemonCount++;const t=Math.floor(Math.random()*898)+1;console.log("Pokemon number: ",t);const n=yield(yield fetch("https://pokeapi.co/api/v2/pokemon/"+t)).json();this.imageUrl=n.sprites.other["official-artwork"].front_shiny,this.pokemonName=n.name})}_onResetClick(){this.count=0,this.imageUrl="",this.pokemonName="",this.hasLost=!1,document.querySelector("#pokemonNameInput").value=""}_onCountResetClick(){this.totalPokemonCount=0,this.correctCount=0,this.incorrectCount=0}_onAllResetClick(){this.count=0,this.imageUrl="",this.pokemonName="",this.hasLost=!1,this.totalPokemonCount=0,this.correctCount=0,this.incorrectCount=0;const t=document.querySelector("#pokemonNameInput");t&&(t.value=""),this.wonPokemon=[],this.lostPokemon=[],this.requestUpdate();const i=this.shadowRoot.querySelector("#wonCardsContainer");i&&(i.innerHTML="");const n=this.shadowRoot.querySelector("#lostCardsContainer");n&&(n.innerHTML="")}_onValidateClick(){const t=this.shadowRoot.querySelector("#pokemonNameInput");t.value.trim().toLowerCase()===this.pokemonName.toLowerCase()?(alert("Félicitations, vous avez gagné !"),this.hasLost=!1,this.pokemonName="",this.imageUrl="",this.count=0,this.correctCount++,t.value="",this._addToWonCards()):(alert("Dommage, vous avez perdu !"),this.hasLost=!0,this.incorrectCount++,this._addToLostCards()),this.totalPokemonCount++,this._onClick(),this.requestUpdate()}_addToWonCards(){const t={name:this.pokemonName,imageUrl:this.imageUrl};this.wonPokemon=[...this.wonPokemon,t],localStorage.setItem("wonPokemon",JSON.stringify(this.wonPokemon))}_addToLostCards(){const t=this.shadowRoot.querySelector("#lostCardsContainer"),i=document.createElement("div");i.classList.add("cardLost"),i.innerHTML=`
     <img class="pokemon-image" src="${this.imageUrl}" alt="${this.pokemonName}">
     <p>${this.pokemonName}</p>
-  `, t.appendChild(o);
-    const e = { name: this.pokemonName, imageUrl: this.imageUrl }, n = localStorage.getItem("lostPokemon"), a = n ? JSON.parse(n) : [];
-    a.push(e), localStorage.setItem("lostPokemon", JSON.stringify(a));
-  }
-  static get styles() {
-    return s`
+  `,t.appendChild(i);const n={name:this.pokemonName,imageUrl:this.imageUrl},o=localStorage.getItem("lostPokemon"),e=o?JSON.parse(o):[];e.push(n),localStorage.setItem("lostPokemon",JSON.stringify(e))}static get styles(){return u`
       :host {
         width: 1280px;
         margin: 0 auto;
@@ -335,10 +242,4 @@ class c extends r {
           background-color: #f9f9f9;
         }
       }
-    `;
-  }
-}
-window.customElements.define("my-element", c);
-export {
-  c as MyElement
-};
+    `}}window.customElements.define("my-element",h);
