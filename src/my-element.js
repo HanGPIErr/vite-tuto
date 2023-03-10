@@ -335,7 +335,7 @@ export class MyElement extends LitElement {
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-image: url("./src/assets/bg-pokemon.jpg");
+        background-image: url("./assets/bg-pokemon.jpg");
         background-size: cover;
         background-position: center;
         border-radius: 8px;
