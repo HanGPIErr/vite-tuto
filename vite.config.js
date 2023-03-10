@@ -1,12 +1,9 @@
-import { defineConfig } from 'vite';
 import copy from 'rollup-plugin-copy';
 
-export default defineConfig({
+export default {
   build: {
-    lib: {
-      entry: 'src/my-element.js',
-      formats: ['es'],
-    },
+    target: 'es2015',
+    outDir: 'dist',
     rollupOptions: {
       external: /^lit/,
       plugins: [
@@ -19,7 +16,8 @@ export default defineConfig({
       ],
     },
   },
-  scripts: {
-    preview: 'vite preview --port 8080'
-  }
-})
+  server: {
+    port: 8080,
+    open: true,
+  },
+};
